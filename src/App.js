@@ -6,30 +6,28 @@ import NewTask from './components/NewTask/NewTask';
 // Hooks
 import useHttp from './hooks/useHttp';
 
+// Api
+const url = 'https://test-9a22d-default-rtdb.asia-southeast1.firebasedatabase.app/task.json';
+
 function App() {
   // Init State
   const [tasks, setTasks] = useState([]);
 
-  // Hooks Arg
-  const transformTasks = taskObj => {
-    const loadedTasks = [];
-    for (const taskKey in taskObj) {
-      loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
-    }
-    setTasks(loadedTasks);
-  };
-
   // Hooks
-  const { isLoading, error, sendRequest: fetchTasks } = useHttp(
-    {
-      url: 'https://react-http-1bdfa-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json',
-    },
-    transformTasks
-  );
+  const { isLoading, error, sendRequest: fetchTasks } = useHttp();
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    // Hooks Arg
+    const transformTasks = taskObj => {
+      const loadedTasks = [];
+      for (const taskKey in taskObj) {
+        loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
+      }
+      setTasks(loadedTasks);
+    };
+
+    fetchTasks({ url }, transformTasks);
+  }, [fetchTasks]);
 
   const taskAddHandler = task => {
     setTasks(prevTasks => prevTasks.concat(task));
